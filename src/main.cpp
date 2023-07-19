@@ -3,6 +3,8 @@
 // Based on examples from https://github.com/matthijskooijman/arduino-lmic
 // Copyright (c) 2015 Thomas Telkamp and Matthijs Kooijman
 
+#include "defaultconfig.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
@@ -39,39 +41,12 @@
 
 // This EUI must be in BIG-ENDIAN format, most-significant byte (MSB).
 // For TTN issued EUIs the first bytes should be 0x70, 0xB3, 0xD5.
-static const uint8_t APPEUI[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+static const uint8_t APPEUI[8] = { 0x00, 0x00, 0x4C, 0xAE, 0x50, 0xBD, 0x9E, 0x7C };
 
 // This key should be in big endian format as well, see above.
 static const uint8_t APPKEY[] = {
-    0x06, 0x20, 0x95, 0x21, 0x75, 0xB3, 0x0A, 0xDD, 0x27, 0xA6, 0xC6, 0xC1, 0x8D, 0x9A, 0x59, 0x56
+    0xEE, 0x9B, 0x3A, 0x7A, 0x12, 0xFD, 0xFB, 0xED, 0x9D, 0x66, 0x50, 0x68, 0x55, 0xB6, 0x9C, 0x94
 };
-
-#define DEFAULT_WIFI_PASSWORD   "pmsensor"
-
-#define OLED_I2C_ADDR 0x3C
-
-#define PIN_OLED_RESET  16
-#define PIN_OLED_SDA    4
-#define PIN_OLED_SCL    15
-#define PIN_BUTTON      0
-#define PIN_SDS_RX      22
-#define PIN_SDS_TX      23
-#define PIN_VEXT        21
-
-#define UG_PER_M3       "\u00B5g/m\u00B3"
-
-// total measurement cycle time (seconds)
-#define TIME_CYCLE      300
-// time to show version info
-#define TIME_VERSION    5
-// duration of warmup (seconds)
-#define TIME_WARMUP     20
-// duration of measurement (seconds)
-#define TIME_MEASURE    10
-// reboot interval (seconds)
-#define REBOOT_INTERVAL 2592000UL
-// time to keep display on (ms)
-#define TIME_OLED_ENABLED   300000UL
 
 // how we know the non-volatile storage contains meaningful data
 #define NVDATA_MAGIC    "magic"
@@ -704,6 +679,7 @@ void setup(void)
     LMIC_reset();
     LMIC_registerEventCb(onEventCallback, NULL);
     LMIC_startJoining();
+    LMIC_setDrTxpow(LORA_DR, LORA_TXPW);
 
     // detect hardware
     snprintf(board_name, sizeof(board_name), "ESP32-%s", BOARD_NAME);
